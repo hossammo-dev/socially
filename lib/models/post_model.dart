@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PostModel {
   String postId;
   String authorName;
-  // String authorEmail;
+  String authorEmail;
   String authorAvatarUrl;
   String postImageUrl;
   String postDescription;
@@ -18,7 +18,7 @@ class PostModel {
   PostModel({
     this.postId,
     this.authorName,
-    // this.authorEmail,
+    this.authorEmail,
     this.authorAvatarUrl,
     this.postImageUrl,
     this.postDescription,
@@ -32,16 +32,20 @@ class PostModel {
 
   PostModel.fromJson(Map<String, dynamic> json) {
     this.postId = json['id'];
-    // this.postAuthor = UserModel.fromJson(json['post_author']);
     this.authorName = json['author_name'];
-    // this.authorEmail = json['author_email'];
+    this.authorEmail = json['author_email'] ?? 'Nothing';
     this.authorAvatarUrl = json['author_avatar_url'];
     this.postImageUrl = json['post_image_url'];
     this.postDescription = json['post_description'];
     this.publishedAt = json['published_at'];
+
     // json['post_comments'].forEach((comment) {
-    //   this.postComments.add(CommentModel.fromJson(comment));
+    //   this.postComments.add(CommentModel.fromJson(comment.data()));
     // });
+    // json['post_comments'].docs.forEach((comment) {
+    //   this.postComments.add(CommentModel.fromJson(comment.data()));
+    // });
+
     this.postLikesNumber = json['likes_number'];
     this.postAwardsNumber = json['awards_number'];
     this.postCommentsNumber = json['comments_number'];
@@ -49,9 +53,8 @@ class PostModel {
 
   Map<String, dynamic> toJson() => {
         'id': this.postId,
-        // 'post_author': this.postAuthor,
         'author_name': this.authorName,
-        // 'author_email': this.authorEmail,
+        'author_email': this.authorEmail,
         'author_avatar_url': this.authorAvatarUrl,
         'post_image_url': this.postImageUrl,
         'post_description': this.postDescription,
@@ -59,7 +62,6 @@ class PostModel {
         'likes_number': this.postLikesNumber,
         'awards_number': this.postAwardsNumber,
         'comments_number': this.postCommentsNumber,
-        // 'comments':
       };
 }
 

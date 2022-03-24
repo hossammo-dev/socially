@@ -122,6 +122,7 @@ Future<Container> defaultModalBottomSheet(
   double height,
   double width,
   Color color,
+  EdgeInsetsGeometry margin,
   @required Widget child,
 }) =>
     showModalBottomSheet(
@@ -129,6 +130,7 @@ Future<Container> defaultModalBottomSheet(
       builder: (context) => Container(
         height: height ?? Constants.getMobileHeight(context) * 0.5,
         width: width ?? double.infinity,
+        margin: margin,
         decoration: BoxDecoration(
           color: color ?? ConstantColors.blueGreyColor,
           borderRadius: BorderRadius.only(

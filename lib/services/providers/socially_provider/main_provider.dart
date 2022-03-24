@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:socially/models/user_model.dart';
@@ -64,7 +66,7 @@ class MainProvider extends ChangeNotifier {
 
   //create a new post
   Future<void> createPost(
-      {@required imageFile, @required String postDescription}) async {
+      {@required File imageFile, @required String postDescription}) async {
     final String _postId = Uuid().v4();
     final String _postImageUrl = await FirebaseUtils.uploadToStorage(
       imageFile: imageFile,
@@ -76,7 +78,7 @@ class MainProvider extends ChangeNotifier {
     PostModel _postModel = PostModel(
       postId: _postId,
       authorName: _userModel.username,
-      // authorEmail: _userModel.email,
+      authorEmail: _userModel.email,
       authorAvatarUrl: _userModel.avatarUrl,
       postImageUrl: _postImageUrl,
       postDescription: postDescription,
@@ -146,6 +148,95 @@ class MainProvider extends ChangeNotifier {
         getPosts();
       },
     );
+
+    //TODO: Edit post likes and make them in a separate collection.
+
+    // final String _likeId = Uuid().v4();
+    // await FirebaseUtils.saveData(
+    //   collection: 'posts',
+    //   id: postId,
+    //   secondCollection: 'likes',
+    //   secondId: _likeId,
+    //   data: {
+    //     'id': _likeId,
+    //     'user_id': userModel.userId,
+    //   },
+    // );
+  }
+
+  //comment psot
+  void commentPost({@required String postId, @required String comment}) async {
+    final String _commentId = Uuid().v4();
+    await FirebaseUtils.saveData(
+      collection: 'posts',
+      id: postId,
+      secondCollection: 'post_comments',
+      secondId: _commentId,
+      data: {
+        'id': _commentId,
+        'user_id': userModel.userId,
+        'username': userModel.username,
+        'user_avatar_url': userModel.avatarUrl,
+        'comment': comment,
+        'published_at': Timestamp.now(),
+        'comment_likes_number': 0,
+      },
+    ).whenComplete(
+      () => getPosts(),
+    );
+    notifyListeners();
+  }
+
+  // 025e - 922
+
+
+  //edit post
+  Future<void> editPost({
+    @required String postId,
+    String postDescription,
+    File imageFile,
+    String postImageUrl,
+  }) async {
+    if (imageFile != null) {
+      String _postImageUrl;
+      await FirebaseUtils.deleteFromStorage(postImageUrl)
+          .whenComplete(() async {
+            print('---file deleted successfully!---');
+        _postImageUrl = await FirebaseUtils.uploadToStorage(
+            imageFile: imageFile,
+            path: 'userPostsImages/$postId/${imageFile.path.substring(31)}');
+      });
+      await FirebaseUtils.updateData(
+        collection: 'posts',
+        id: postId,
+        data: {
+          'post_image_url': _postImageUrl,
+          'post_description': postDescription,
+        },
+      ).whenComplete(
+        () => getPosts(),
+      );
+    } else {
+      await FirebaseUtils.updateData(
+        collection: 'posts',
+        id: postId,
+        data: {
+          'post_description': postDescription,
+        },
+      ).whenComplete(
+        () => getPosts(),
+      );
+    }
+
+    notifyListeners();
+  }
+
+  //delete post
+  Future<void> deletePost(String postId) async {
+    FirebaseUtils.deleteData(collection: 'posts', id: postId).whenComplete(
+      () => getPosts(),
+    );
+    notifyListeners();
   }
 
   //get all users

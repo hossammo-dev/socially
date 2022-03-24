@@ -70,10 +70,20 @@ class FirebaseUtils {
   //save data to the database
   static Future<void> saveData(
       {@required String collection,
+      String secondCollection,
       @required String id,
+      String secondId,
       @required Map<String, dynamic> data}) async {
     print('--start saving--');
-    await _firestoreDb.collection(collection).doc(id).set(data);
+    if (secondCollection == null)
+      await _firestoreDb.collection(collection).doc(id).set(data);
+    else
+      await _firestoreDb
+          .collection(collection)
+          .doc(id)
+          .collection(secondCollection)
+          .doc(secondId)
+          .set(data);
     print('--end saving--');
   }
 
@@ -94,6 +104,10 @@ class FirebaseUtils {
           .doc(secondId)
           .update(data);
   }
+
+  static Future<void> deleteData(
+          {@required String collection, @required String id}) async =>
+      _firestoreDb.collection(collection).doc(id).delete();
 
   //get a specific data from database
   static Future<DocumentSnapshot<Map<String, dynamic>>> getData(
@@ -152,4 +166,7 @@ class FirebaseUtils {
     }
     return Constants.dummyImageUrl;
   }
+
+  static Future<void> deleteFromStorage(String url) async =>
+      FirebaseStorage.instance.refFromURL(url).delete();
 }
