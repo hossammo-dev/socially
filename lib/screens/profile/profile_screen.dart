@@ -5,22 +5,64 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:socially/constants/constant_colors.dart';
 import 'package:socially/constants/constant_fonts.dart';
 import 'package:socially/constants/constants.dart';
+import 'package:socially/models/user_model.dart';
+import 'package:socially/screens/auth/auth_screen.dart';
+import 'package:socially/utils/firebase_utils.dart';
 import 'package:socially/widgets/shared_widgets.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  ProfileScreen({this.userId});
+  final String userId;
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  UserModel _userModel;
+  bool _isLoading = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.userId != null) {
+      Future.delayed(Duration(seconds: 1), () => fetchUserData());
+    }
+  }
+
+  void fetchUserData() {
+    FirebaseUtils.getData(
+      collection: 'users',
+      id: widget.userId,
+    ).then((value) {
+      _userModel = UserModel.fromJson(value.data());
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: defaultAppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(
-            EvaIcons.settingsOutline,
-            color: ConstantColors.blueColor,
-          ),
-        ),
+        leading: (widget.userId == null)
+            ? IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  EvaIcons.settingsOutline,
+                  color: ConstantColors.blueColor,
+                ),
+              )
+            : IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(
+                  EvaIcons.arrowBackOutline,
+                  color: ConstantColors.blueColor,
+                ),
+              ),
         title: defaultRichText(
-          firstTitle: 'My',
+          firstTitle: (widget.userId == null) ? 'My' : 'User',
           firstTitleStyle: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -35,15 +77,36 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
         trailings: [
-          IconButton(
-            onPressed: () {
-              //TODO: Add logout function for both email and google.
-            },
-            icon: Icon(
-              EvaIcons.logOutOutline,
-              color: ConstantColors.greenColor,
-            ),
-          ),
+          (widget.userId == null)
+              ? IconButton(
+                  onPressed: () {
+                    //TODO: Add logout function for both email and google.
+                    Constants.getMainProvider(context)
+                        .logUserOut()
+                        .whenComplete(
+                      () {
+                        Constants.getMainProvider(context).changeIndex(0);
+                        navigateAndRemove(
+                          context,
+                          page: AuthScreen(),
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(
+                    EvaIcons.logOutOutline,
+                    color: ConstantColors.greenColor,
+                  ),
+                )
+              : IconButton(
+                  onPressed: () {
+                    //TODO: Add alt profile options
+                  },
+                  icon: Icon(
+                    EvaIcons.moreVerticalOutline,
+                    color: ConstantColors.greenColor,
+                  ),
+                ),
         ],
       ),
       body: SingleChildScrollView(
@@ -56,132 +119,153 @@ class ProfileScreen extends StatelessWidget {
             color: ConstantColors.blueGreyColor.withOpacity(0.6),
             borderRadius: BorderRadius.circular(15),
           ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
+          child: (_isLoading && widget.userId != null)
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Column(
+                  children: [
+                    Row(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: ConstantColors.transperant,
-                          backgroundImage: NetworkImage(
-                              Constants.getMainProvider(context)
-                                  .userModel
-                                  .avatarUrl),
-                          // backgroundImage:
-                          //     NetworkImage(Constants.dummyImageUrl),
-                          radius: 50,
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          '${Constants.getMainProvider(context).userModel.username}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: ConstantColors.whiteColor,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              EvaIcons.emailOutline,
-                              size: 13,
-                              color: ConstantColors.greenColor,
-                            ),
-                            const SizedBox(width: 3),
-                            Expanded(
-                              child: Text(
-                                '${Constants.getMainProvider(context).userModel.email}',
+                        Expanded(
+                          child: Column(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: ConstantColors.transperant,
+                                backgroundImage: NetworkImage(
+                                  (widget.userId == null)
+                                      ? Constants.getMainProvider(context)
+                                          .userModel
+                                          .avatarUrl
+                                      : _userModel.avatarUrl,
+                                ),
+                                // backgroundImage:
+                                //     NetworkImage(Constants.dummyImageUrl),
+                                radius: 50,
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                (widget.userId == null)
+                                    ? Constants.getMainProvider(context)
+                                        .userModel
+                                        .username
+                                    : _userModel.username,
                                 style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: ConstantColors.whiteColor,
                                 ),
                               ),
+                              Row(
+                                children: [
+                                  Icon(
+                                    EvaIcons.emailOutline,
+                                    size: 13,
+                                    color: ConstantColors.greenColor,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Expanded(
+                                    child: Text(
+                                      (widget.userId == null)
+                                          ? Constants.getMainProvider(context)
+                                              .userModel
+                                              .email
+                                          : _userModel.email,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: ConstantColors.whiteColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                _buildProfileCard(
+                                  (widget.userId == null)
+                                      ? Constants.getMainProvider(context)
+                                          .userModel
+                                          .followersNumber
+                                      : _userModel.followersNumber,
+                                  'Followers',
+                                ),
+                                _buildProfileCard(
+                                  (widget.userId == null)
+                                      ? Constants.getMainProvider(context)
+                                          .userModel
+                                          .followingNumber
+                                      : _userModel.followingNumber,
+                                  'Following',
+                                ),
+                              ],
+                            ),
+                            _buildProfileCard(
+                              (widget.userId == null)
+                                  ? Constants.getMainProvider(context)
+                                      .userModel
+                                      .postsNumber
+                                  : _userModel.postsNumber,
+                              'Posts',
                             ),
                           ],
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          _buildProfileCard(
-                            Constants.getMainProvider(context)
-                                .userModel
-                                .followersNumber,
-                            'Followers',
-                          ),
-                          _buildProfileCard(
-                            Constants.getMainProvider(context)
-                                .userModel
-                                .followingNumber,
-                            'Following',
-                          ),
-                        ],
-                      ),
-                      _buildProfileCard(
-                        Constants.getMainProvider(context)
-                            .userModel
-                            .postsNumber,
-                            'Posts',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Divider(
-                color: ConstantColors.whiteColor,
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Icon(
-                    FontAwesomeIcons.users,
-                    size: 20,
-                    color: ConstantColors.yellowColor,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Recently Added',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 10),
+                    Divider(
                       color: ConstantColors.whiteColor,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 5),
-              Container(
-                height: 46,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: ConstantColors.darkColor,
-                  borderRadius: BorderRadius.circular(4),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Icon(
+                          FontAwesomeIcons.users,
+                          size: 20,
+                          color: ConstantColors.yellowColor,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Recently Added',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: ConstantColors.whiteColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      height: 46,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: ConstantColors.darkColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: ConstantColors.darkColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Image.asset(
+                          '${Constants.emptyImageUrl}',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: ConstantColors.darkColor,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Image.asset(
-                    '${Constants.emptyImageUrl}',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
