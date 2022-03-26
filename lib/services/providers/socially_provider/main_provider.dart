@@ -39,7 +39,7 @@ class MainProvider extends ChangeNotifier {
   }
 
   //get user data from database
-  void getUserData({String userId}) {
+  Future<void> getUserData({String userId}) async {
     FirebaseUtils.getData(id: userId ?? Constants.userId, collection: 'users')
         .then((user) {
       _userModel = UserModel.fromJson(user.data());
@@ -51,9 +51,9 @@ class MainProvider extends ChangeNotifier {
   }
 
   //log out user from the app
-  void logUserOut() {
+  Future<void> logUserOut() async {
     _userModel = UserModel();
-    FirebaseUtils.logoutUser(googleLogout: false)
+    await FirebaseUtils.logoutUser(googleLogout: false)
         .then(
       (_) => _userModel = UserModel(),
     )
@@ -62,6 +62,7 @@ class MainProvider extends ChangeNotifier {
         print(error.toString());
       },
     );
+    notifyListeners();
   }
 
   //create a new post
@@ -77,14 +78,15 @@ class MainProvider extends ChangeNotifier {
 
     PostModel _postModel = PostModel(
       postId: _postId,
-      authorName: _userModel.username,
-      authorEmail: _userModel.email,
-      authorAvatarUrl: _userModel.avatarUrl,
+      userId: _userModel.userId,
+      username: _userModel.username,
+      // authorEmail: _userModel.email,
+      userAvatarUrl: _userModel.avatarUrl,
       postImageUrl: _postImageUrl,
       postDescription: postDescription,
-      postAwardsNumber: 0,
-      postLikesNumber: 0,
-      postCommentsNumber: 0,
+      // postAwardsNumber: 0,
+      // postLikesNumber: 0,
+      // postCommentsNumber: 0,
       publishedAt: Timestamp.now(),
     );
 
@@ -128,7 +130,7 @@ class MainProvider extends ChangeNotifier {
       _postsList = [];
       event.docs.forEach((post) {
         _postsList.add(PostModel.fromJson(post.data()));
-        print('--first post author => ${postsList[0].authorName}');
+        print('--first post author => ${postsList[0].username}');
       });
     });
     notifyListeners();
@@ -136,11 +138,19 @@ class MainProvider extends ChangeNotifier {
 
   //like post
   void likePost({@required String postId}) async {
+    final String _likeId = Uuid().v4();
+    LikeModel _likeModel = LikeModel(
+      id: _likeId,
+      userId: _userModel.userId,
+      username: _userModel.username,
+      userAvatarUrl: _userModel.avatarUrl,
+      publishedAt: Timestamp.now(),
+    );
     FirebaseUtils.updateData(
       collection: 'posts',
       id: postId,
       data: {
-        'likes_number': FieldValue.increment(1),
+        'likes': FieldValue.arrayUnion([_likeModel.toJson()]),
       },
     ).whenComplete(
       () {
@@ -165,30 +175,59 @@ class MainProvider extends ChangeNotifier {
   }
 
   //comment psot
-  void commentPost({@required String postId, @required String comment}) async {
+  Future<void> commentPost({@required String postId, @required String comment}) async {
     final String _commentId = Uuid().v4();
-    await FirebaseUtils.saveData(
+    CommentModel _commentModel = CommentModel(
+      id: _commentId,
+      userId: _userModel.userId,
+      username: _userModel.username,
+      userAvatarUrl: _userModel.avatarUrl,
+      description: comment,
+      publishedAt: Timestamp.now(),
+    );
+    await FirebaseUtils.updateData(
       collection: 'posts',
       id: postId,
-      secondCollection: 'post_comments',
-      secondId: _commentId,
       data: {
-        'id': _commentId,
-        'user_id': userModel.userId,
-        'username': userModel.username,
-        'user_avatar_url': userModel.avatarUrl,
-        'comment': comment,
-        'published_at': Timestamp.now(),
-        'comment_likes_number': 0,
+        'comments': FieldValue.arrayUnion([_commentModel.toJson()])
       },
     ).whenComplete(
-      () => getPosts(),
+      () {
+        debugPrint('Comment added successfully!');
+        getPosts();
+      },
     );
     notifyListeners();
   }
 
-  // 025e - 922
-
+  //award post
+  void awardPost({
+    @required String postId,
+    @required String awardUrl,
+  }) async {
+    final String _awardId = Uuid().v4();
+    AwardModel _awardModel = AwardModel(
+      id: _awardId,
+      userId: _userModel.userId,
+      username: _userModel.username,
+      userAvatarUrl: _userModel.avatarUrl,
+      awardUrl: awardUrl,
+      publishedAt: Timestamp.now(),
+    );
+    await FirebaseUtils.updateData(
+      collection: 'posts',
+      id: postId,
+      data: {
+        'awards': FieldValue.arrayUnion([_awardModel.toJson()]),
+      },
+    ).whenComplete(
+      () {
+        print('post awarded successfully!');
+        getPosts();
+      },
+    );
+    notifyListeners();
+  }
 
   //edit post
   Future<void> editPost({
@@ -201,7 +240,7 @@ class MainProvider extends ChangeNotifier {
       String _postImageUrl;
       await FirebaseUtils.deleteFromStorage(postImageUrl)
           .whenComplete(() async {
-            print('---file deleted successfully!---');
+        print('---file deleted successfully!---');
         _postImageUrl = await FirebaseUtils.uploadToStorage(
             imageFile: imageFile,
             path: 'userPostsImages/$postId/${imageFile.path.substring(31)}');
@@ -233,16 +272,36 @@ class MainProvider extends ChangeNotifier {
 
   //delete post
   Future<void> deletePost(String postId) async {
-    FirebaseUtils.deleteData(collection: 'posts', id: postId).whenComplete(
+    await FirebaseUtils.deleteData(collection: 'posts', id: postId)
+        .whenComplete(
       () => getPosts(),
     );
     notifyListeners();
   }
 
+  //remove like
+  Future<void> removeLike({
+    @required String postId,
+    @required LikeModel like,
+  }) async {
+    FirebaseUtils.updateData(
+      collection: 'posts',
+      id: postId,
+      data: {
+        'likes': FieldValue.arrayRemove([like.toJson()]),
+      },
+    ).whenComplete(
+      () {
+        print('----like removed successfully!');
+        getPosts();
+      },
+    );
+  }
+
   //get all users
   void getAllUsersData() async {
     _usersList = [];
-    FirebaseUtils.getCollectionData(collection: 'users')
+    await FirebaseUtils.getCollectionData(collection: 'users')
         .then(
           (users) => users.docs.forEach((user) {
             _usersList.add(UserModel.fromJson(user.data()));
@@ -256,9 +315,29 @@ class MainProvider extends ChangeNotifier {
 
   //delete user account
   Future<void> deleteUserAccount(String userId) async {
-    FirebaseUtils.deleteUser(userId).whenComplete(() {
+    await FirebaseUtils.deleteUser(userId).whenComplete(() {
       // print('user deleted successfully!');
       getAllUsersData();
     });
+  }
+
+  //follow user
+  void followUser({
+    @required String userId,
+    @required String username,
+    @required String avatarUrl,
+  }) {
+    FollowModel _followModel = FollowModel(
+      id: userId,
+      username: username,
+      avatarUrl: avatarUrl,
+    );
+    // FirebaseUtils.updateData(
+    //   collection: 'users',
+    //   id: userModel.userId,
+    //   data: {
+    //     'followers': FieldValue.arrayUnion([_followModel.toJson()]),
+    //   },
+    // ).whenComplete(() => getUserData(userId: _userModel.userId));
   }
 }

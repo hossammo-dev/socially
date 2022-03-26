@@ -1,7 +1,6 @@
 import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lottie/lottie.dart';
 import 'package:socially/constants/constants.dart';
 import 'package:socially/screens/home/home_screen.dart';
 
@@ -56,8 +55,9 @@ class EmailAuthWidget extends StatelessWidget {
                               googleLogin: false,
                               email: _user.email,
                               password: _user.password)
-                          .whenComplete(() {
-                        Constants.getMainProvider(context).getUserData(userId: _user.userId);
+                          .then((userId) {
+                        Constants.getMainProvider(context).getUserData(
+                            userId: _user.userId ?? Constants.userId);
                         navigateAndRemove(context, page: HomeScreen());
                       }),
                       icon: Icon(

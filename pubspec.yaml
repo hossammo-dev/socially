@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  cached_network_image: ^3.2.0
   cloud_firestore: ^3.1.10
   conditional_builder: ^1.0.2
   cupertino_icons: ^1.0.4

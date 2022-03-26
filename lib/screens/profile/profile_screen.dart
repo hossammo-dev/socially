@@ -85,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         .logUserOut()
                         .whenComplete(
                       () {
-                        Constants.getMainProvider(context).changeIndex(0);
+                        // Constants.getMainProvider(context).changeIndex(0);
                         navigateAndRemove(
                           context,
                           page: AuthScreen(),
@@ -192,16 +192,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   (widget.userId == null)
                                       ? Constants.getMainProvider(context)
                                           .userModel
-                                          .followersNumber
-                                      : _userModel.followersNumber,
+                                          .follwers
+                                          .length
+                                      : _userModel.follwers.length,
                                   'Followers',
                                 ),
                                 _buildProfileCard(
                                   (widget.userId == null)
                                       ? Constants.getMainProvider(context)
                                           .userModel
-                                          .followingNumber
-                                      : _userModel.followingNumber,
+                                          .followings
+                                          .length
+                                      : _userModel.followings.length,
                                   'Following',
                                 ),
                               ],
@@ -285,7 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '$number',
+              '$number' ?? '0',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,

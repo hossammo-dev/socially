@@ -20,28 +20,25 @@ class AuthProvider with ChangeNotifier {
   bool get hidePassword => _hidePassword;
 
   //login using email and password
-  Future<void> logUserIn({
+  Future<String> logUserIn({
     @required bool googleLogin,
     String email,
     String password,
   }) async {
+    // String _userId = '';
     await FirebaseUtils.login(email, password, googleLogin).then(
       (user) {
         assert(user.user.uid !=
             null); //make sure userId has a value and not [null].
         final _user = user.user;
         Constants.userId = _user.uid;
+        // _userId = _user.uid;
         if (googleLogin) {
           UserModel _userModel = UserModel(
             userId: Constants.userId,
             username: _user.displayName,
             email: _user.email,
-            bio: 'Hello, I am using socially!',
             avatarUrl: _user.photoURL,
-            password: '',
-            postsNumber: 0,
-            followingNumber: 0,
-            followersNumber: 0,
           );
           FirebaseUtils.saveData(
               collection: 'users',
@@ -52,6 +49,7 @@ class AuthProvider with ChangeNotifier {
       },
     );
     notifyListeners();
+    return Constants.userId;
   }
 
   //create new account
@@ -88,12 +86,7 @@ class AuthProvider with ChangeNotifier {
           userId: Constants.userId,
           username: username,
           email: email,
-          bio: 'Hello, I am using socially!',
           avatarUrl: _avatarImageUrl,
-          password: password,
-          postsNumber: 0,
-          followingNumber: 0,
-          followersNumber: 0,
         );
         await FirebaseUtils.saveData(
             collection: 'users',

@@ -142,11 +142,17 @@ class LoginOrRegisterWidget extends StatelessWidget {
                                       password: _passController.text,
                                       googleLogin: false)
                                   .whenComplete(
-                                    () => navigateAndReplace(
-                                      context,
-                                      page: HomeScreen(),
-                                    ),
-                                  );
+                                () {
+                                  Constants.getMainProvider(context)
+                                      .getUserData()
+                                      .whenComplete(
+                                        () => navigateAndReplace(
+                                          context,
+                                          page: HomeScreen(),
+                                        ),
+                                      );
+                                },
+                              );
                             else
                               Constants.getAuthProvider(context)
                                   .createAccount(

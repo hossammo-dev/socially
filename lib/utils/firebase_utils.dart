@@ -105,9 +105,22 @@ class FirebaseUtils {
           .update(data);
   }
 
-  static Future<void> deleteData(
-          {@required String collection, @required String id}) async =>
-      _firestoreDb.collection(collection).doc(id).delete();
+  static Future<void> deleteData({
+    @required String collection,
+    String secondCollection,
+    @required String id,
+    String secondId,
+  }) async {
+    if (secondCollection == null)
+      return await _firestoreDb.collection(collection).doc(id).delete();
+    else
+      return await _firestoreDb
+          .collection(collection)
+          .doc(id)
+          .collection(secondCollection)
+          .doc(secondId)
+          .delete();
+  }
 
   //get a specific data from database
   static Future<DocumentSnapshot<Map<String, dynamic>>> getData(
