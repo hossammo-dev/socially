@@ -1,3 +1,5 @@
+import 'package:socially/models/post_model.dart';
+
 class UserModel {
   String userId;
   String username;
@@ -6,8 +8,7 @@ class UserModel {
   String bio;
   String password;
   int postsNumber;
-  int followersNumber;
-  int followingNumber;
+  List<PostModel> posts;
   List<FollowModel> follwers;
   List<FollowModel> followings;
 
@@ -19,8 +20,7 @@ class UserModel {
     this.bio,
     this.password,
     this.postsNumber,
-    this.followersNumber,
-    this.followingNumber,
+    this.posts,
     this.follwers,
     this.followings,
   });
@@ -33,11 +33,9 @@ class UserModel {
     this.bio = json['bio'] ?? 'Failed to get the biography';
     this.password = json['password'];
     this.postsNumber = json['posts_number'];
-    // this.followersNumber = json['followers_number'];
-    // this.followingNumber = json['following_number'];
-    // json['followers'].forEach((follower) {
-    //   this.follwers.add(FollowModel.fromJson(follower));
-    // });
+    this.posts = [
+      for (final post in json['user_posts'] ?? []) PostModel.fromJson(post),
+    ];
     this.follwers = [
       for (final follower in json['followers'] ?? [])
         FollowModel.fromJson(follower)
@@ -46,7 +44,7 @@ class UserModel {
     //   this.follwers.add(FollowModel.fromJson(following));
     // });
 
-     this.followings = [
+    this.followings = [
       for (var following in json['followings'] ?? [])
         FollowModel.fromJson(following)
     ];
@@ -63,6 +61,7 @@ class UserModel {
       'posts_number': this.postsNumber ?? 0,
       // 'followers_number': this.followersNumber ?? 0,
       // 'following_number': this.followingNumber ?? 0,
+      'user_posts': this.posts ?? [],
       'followers': this.follwers ?? [],
       'followings': this.followings ?? [],
     };

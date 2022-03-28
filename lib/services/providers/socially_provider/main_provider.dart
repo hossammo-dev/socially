@@ -100,7 +100,7 @@ class MainProvider extends ChangeNotifier {
           .collection('users')
           .doc(_userModel.userId)
           .update({
-        'posts_number': FieldValue.increment(1),
+        'user_posts': FieldValue.arrayUnion([_postModel.toJson()]),
       }).then((_) {
         getUserData();
         getPosts();
@@ -357,7 +357,7 @@ class MainProvider extends ChangeNotifier {
       },
     ).whenComplete(() {
       print('---Your are now a follower for: $username');
-       getUserData(userId: _userModel.userId);
+      getUserData(userId: _userModel.userId);
     });
   }
 }

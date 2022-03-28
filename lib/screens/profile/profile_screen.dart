@@ -27,8 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.didChangeDependencies();
     if (widget.userId != null) {
       Future.delayed(Duration(seconds: 1), () => fetchUserData());
-    } else
-      Future.delayed(Duration(seconds: 2), () {});
+    }
   }
 
   void fetchUserData() {
@@ -230,8 +229,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   (widget.userId == null)
                                       ? Constants.getMainProvider(context)
                                           .userModel
-                                          .postsNumber
-                                      : _userModel.postsNumber,
+                                          .posts
+                                          .length
+                                      : _userModel.posts.length,
                                   'Posts',
                                 ),
                               ],
