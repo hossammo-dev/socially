@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:socially/constants/constant_colors.dart';
 import 'package:socially/constants/constant_fonts.dart';
@@ -9,6 +11,8 @@ import 'package:socially/models/user_model.dart';
 import 'package:socially/screens/auth/auth_screen.dart';
 import 'package:socially/utils/firebase_utils.dart';
 import 'package:socially/widgets/shared_widgets.dart';
+
+import '../../models/post_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({this.userId});
@@ -275,15 +279,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 10),
                     Expanded(
                       child: Container(
+                        padding: const EdgeInsets.all(8),
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: ConstantColors.darkColor,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Image.asset(
-                          '${Constants.emptyImageUrl}',
-                          fit: BoxFit.contain,
-                        ),
+                        child: (widget.userId == null)
+                            ? (Constants.getMainProvider(context)
+                                    .userModel
+                                    .posts
+                                    .isNotEmpty)
+                                ? buildImagesGrid(
+                                    Constants.getMainProvider(context)
+                                        .userModel
+                                        .posts)
+                                : Image.asset(
+                                    '${Constants.emptyImageUrl}',
+                                    fit: BoxFit.contain,
+                                  )
+                            : (_userModel.posts.isNotEmpty)
+                                ? buildImagesGrid(_userModel.posts)
+                                : Image.asset(
+                                    '${Constants.emptyImageUrl}',
+                                    fit: BoxFit.contain,
+                                  ),
                       ),
                     ),
                   ],
@@ -329,3 +349,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
+Container buildImagesGrid(List<PostModel> posts) => Container(
+      child: GridView.custom(
+        gridDelegate: SliverQuiltedGridDelegate(
+          crossAxisCount: 4,
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          repeatPattern: QuiltedGridRepeatPattern.inverted,
+          pattern: [
+            QuiltedGridTile(2, 2),
+            QuiltedGridTile(1, 1),
+            QuiltedGridTile(1, 1),
+            QuiltedGridTile(1, 2),
+          ],
+        ),
+        childrenDelegate: SliverChildBuilderDelegate(
+          (context, index) => Container(
+            decoration: BoxDecoration(
+              color: ConstantColors.whiteColor,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            // child: Image.network(
+            //   posts[index].postImageUrl,
+            //   fit: BoxFit.cover,
+            // ),
+            child: CachedNetworkImage(
+              imageUrl: posts[index].postImageUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
+          childCount: posts.length,
+        ),
+      ),
+    );

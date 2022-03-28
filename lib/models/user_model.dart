@@ -7,7 +7,6 @@ class UserModel {
   String avatarUrl;
   String bio;
   String password;
-  int postsNumber;
   List<PostModel> posts;
   List<FollowModel> follwers;
   List<FollowModel> followings;
@@ -19,7 +18,6 @@ class UserModel {
     this.avatarUrl,
     this.bio,
     this.password,
-    this.postsNumber,
     this.posts,
     this.follwers,
     this.followings,
@@ -32,7 +30,6 @@ class UserModel {
     this.avatarUrl = json['avatar_url'] ?? 'Failed to get the image url';
     this.bio = json['bio'] ?? 'Failed to get the biography';
     this.password = json['password'];
-    this.postsNumber = json['posts_number'];
     this.posts = [
       for (final post in json['user_posts'] ?? []) PostModel.fromJson(post),
     ];
@@ -58,7 +55,6 @@ class UserModel {
       'avatar_url': this.avatarUrl,
       'bio': this.bio ?? 'Hello, I am using socially!',
       'password': this.password ?? '',
-      'posts_number': this.postsNumber ?? 0,
       // 'followers_number': this.followersNumber ?? 0,
       // 'following_number': this.followingNumber ?? 0,
       'user_posts': this.posts ?? [],

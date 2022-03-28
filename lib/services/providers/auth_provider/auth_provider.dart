@@ -87,6 +87,7 @@ class AuthProvider with ChangeNotifier {
           username: username,
           email: email,
           avatarUrl: _avatarImageUrl,
+          password: password, 
         );
         await FirebaseUtils.saveData(
             collection: 'users',
