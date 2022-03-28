@@ -14,11 +14,13 @@ MaterialButton defaultButton({
   double radius,
   double elevation,
   double width,
+  double height,
 }) =>
     MaterialButton(
       onPressed: btnFunction ?? () {},
       color: btnColor,
       minWidth: width ?? double.infinity,
+      height: height,
       padding: const EdgeInsets.all(10),
       elevation: elevation ?? 5.4,
       shape: RoundedRectangleBorder(

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:socially/constants/constants.dart';
@@ -57,7 +56,6 @@ Column commentSheet(
                               ),
                               const SizedBox(width: 10),
                               Text(
-                                // 'Username',
                                 comments[index].username,
                                 style: TextStyle(
                                   color: ConstantColors.whiteColor,
@@ -115,7 +113,6 @@ Column commentSheet(
                                 const SizedBox(width: 5),
                                 Expanded(
                                   child: Text(
-                                    // 'Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World!Hello World! Hello World! Hello World!',
                                     comments[index].description,
                                     style: TextStyle(
                                       color: ConstantColors.whiteColor,

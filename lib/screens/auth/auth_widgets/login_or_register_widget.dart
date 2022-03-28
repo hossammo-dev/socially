@@ -142,15 +142,13 @@ class LoginOrRegisterWidget extends StatelessWidget {
                                       password: _passController.text,
                                       googleLogin: false)
                                   .whenComplete(
-                                () {
-                                  Constants.getMainProvider(context)
-                                      .getUserData()
-                                      .whenComplete(
-                                        () => navigateAndReplace(
-                                          context,
-                                          page: HomeScreen(),
-                                        ),
-                                      );
+                                () async {
+                                  await Constants.getMainProvider(context)
+                                      .getUserData();
+                                  navigateAndReplace(
+                                    context,
+                                    page: HomeScreen(),
+                                  );
                                 },
                               );
                             else
@@ -160,9 +158,9 @@ class LoginOrRegisterWidget extends StatelessWidget {
                                 _emailController.text,
                                 _passController.text,
                               )
-                                  .then(
-                                (_) {
-                                  Constants.getMainProvider(context)
+                                  .whenComplete(
+                                () async {
+                                  await Constants.getMainProvider(context)
                                       .getUserData();
                                   navigateAndReplace(
                                     context,

@@ -4,7 +4,6 @@ class PostModel {
   String postId;
   String userId;
   String username;
-  // String authorEmail;
   String userAvatarUrl;
   String postImageUrl;
   String postDescription;
@@ -12,15 +11,12 @@ class PostModel {
   List<LikeModel> postLikes;
   List<AwardModel> postAwards;
   Timestamp publishedAt;
-  // int postLikesNumber;
-  // int postCommentsNumber;
-  // int postAwardsNumber;
+
 
   PostModel({
     this.postId,
     this.userId,
     this.username,
-    // this.authorEmail,
     this.userAvatarUrl,
     this.postImageUrl,
     this.postDescription,
@@ -28,16 +24,12 @@ class PostModel {
     this.postLikes,
     this.postAwards,
     this.publishedAt,
-    // this.postLikesNumber,
-    // this.postAwardsNumber,
-    // this.postCommentsNumber,
   });
 
   PostModel.fromJson(Map<String, dynamic> json) {
     this.postId = json['id'];
     this.userId = json['user_id'];
     this.username = json['username'];
-    // this.authorEmail = json['author_email'] ?? 'Nothing';
     this.userAvatarUrl = json['user_avatar_url'];
     this.postImageUrl = json['post_image_url'];
     this.postDescription = json['post_description'];
@@ -59,24 +51,16 @@ class PostModel {
     this.postAwards = [
       for (var award in json['awards'] ?? []) AwardModel.fromJson(award)
     ];
-
-    // this.postLikesNumber = json['likes_number'];
-    // this.postAwardsNumber = json['awards_number'];
-    // this.postCommentsNumber = json['comments_number'];
   }
 
   Map<String, dynamic> toJson() => {
         'id': this.postId,
         'user_id': this.userId,
         'username': this.username,
-        // 'author_email': this.authorEmail,
         'user_avatar_url': this.userAvatarUrl,
         'post_image_url': this.postImageUrl,
         'post_description': this.postDescription,
         'published_at': this.publishedAt,
-        // 'likes_number': this.postLikesNumber,
-        // 'awards_number': this.postAwardsNumber,
-        // 'comments_number': this.postCommentsNumber,
         'comments': this.postComments ?? [],
         'likes': this.postLikes ?? [],
         'awards': this.postAwards ?? [],

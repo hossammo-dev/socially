@@ -40,7 +40,8 @@ class MainProvider extends ChangeNotifier {
 
   //get user data from database
   Future<void> getUserData({String userId}) async {
-    FirebaseUtils.getData(id: userId ?? Constants.userId, collection: 'users')
+    await FirebaseUtils.getData(
+            id: userId ?? Constants.userId, collection: 'users')
         .then((user) {
       _userModel = UserModel.fromJson(user.data());
       // print('username => ${userModel.username}');
@@ -175,7 +176,8 @@ class MainProvider extends ChangeNotifier {
   }
 
   //comment psot
-  Future<void> commentPost({@required String postId, @required String comment}) async {
+  Future<void> commentPost(
+      {@required String postId, @required String comment}) async {
     final String _commentId = Uuid().v4();
     CommentModel _commentModel = CommentModel(
       id: _commentId,
@@ -326,18 +328,36 @@ class MainProvider extends ChangeNotifier {
     @required String userId,
     @required String username,
     @required String avatarUrl,
-  }) {
-    FollowModel _followModel = FollowModel(
+  }) async {
+    final FollowModel _followerModel = FollowModel(
       id: userId,
       username: username,
       avatarUrl: avatarUrl,
     );
-    // FirebaseUtils.updateData(
-    //   collection: 'users',
-    //   id: userModel.userId,
-    //   data: {
-    //     'followers': FieldValue.arrayUnion([_followModel.toJson()]),
-    //   },
-    // ).whenComplete(() => getUserData(userId: _userModel.userId));
+
+    final FollowModel _followingModel = FollowModel(
+      id: userModel.userId,
+      username: userModel.username,
+      avatarUrl: userModel.avatarUrl,
+    );
+
+    await FirebaseUtils.updateData(
+      collection: 'users',
+      id: userModel.userId,
+      data: {
+        'followings': FieldValue.arrayUnion([_followerModel.toJson()]),
+      },
+    );
+
+    await FirebaseUtils.updateData(
+      collection: 'users',
+      id: userId,
+      data: {
+        'followers': FieldValue.arrayUnion([_followingModel.toJson()]),
+      },
+    ).whenComplete(() {
+      print('---Your are now a follower for: $username');
+       getUserData(userId: _userModel.userId);
+    });
   }
 }

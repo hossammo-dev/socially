@@ -96,10 +96,7 @@ class FeedScreen extends StatelessWidget {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    if (_post.userId !=
-                                        Constants.getMainProvider(context)
-                                            .userModel
-                                            .userId) {
+                                    if (_post.userId != Constants.userId) {
                                       navigateTo(context,
                                           page: ProfileScreen(
                                               userId: _post.userId));
@@ -309,9 +306,7 @@ class FeedScreen extends StatelessWidget {
                               ],
                             ),
                             (_post.userId ==
-                                    Constants.getMainProvider(context)
-                                        .userModel
-                                        .userId)
+                                    Constants.userId)
                                 ? IconButton(
                                     onPressed: () => defaultModalBottomSheet(
                                           context,

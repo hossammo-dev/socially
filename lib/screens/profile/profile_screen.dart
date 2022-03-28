@@ -27,7 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.didChangeDependencies();
     if (widget.userId != null) {
       Future.delayed(Duration(seconds: 1), () => fetchUserData());
-    }
+    } else
+      Future.delayed(Duration(seconds: 2), () {});
   }
 
   void fetchUserData() {
@@ -208,13 +209,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ],
                             ),
-                            _buildProfileCard(
-                              (widget.userId == null)
-                                  ? Constants.getMainProvider(context)
-                                      .userModel
-                                      .postsNumber
-                                  : _userModel.postsNumber,
-                              'Posts',
+                            Row(
+                              children: [
+                                if (widget.userId != null)
+                                  defaultButton(
+                                      title: 'Follow',
+                                      btnColor: ConstantColors.blueColor,
+                                      elevation: 6.5,
+                                      width: 80.0,
+                                      height: 70.0,
+                                      btnFunction: () =>
+                                          Constants.getMainProvider(context)
+                                              .followUser(
+                                            userId: widget.userId,
+                                            username: _userModel.username,
+                                            avatarUrl: _userModel.avatarUrl,
+                                          )),
+                                const SizedBox(width: 3),
+                                _buildProfileCard(
+                                  (widget.userId == null)
+                                      ? Constants.getMainProvider(context)
+                                          .userModel
+                                          .postsNumber
+                                      : _userModel.postsNumber,
+                                  'Posts',
+                                ),
+                              ],
                             ),
                           ],
                         ),
