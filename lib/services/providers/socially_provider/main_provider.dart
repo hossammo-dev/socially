@@ -81,13 +81,9 @@ class MainProvider extends ChangeNotifier {
       postId: _postId,
       userId: _userModel.userId,
       username: _userModel.username,
-      // authorEmail: _userModel.email,
       userAvatarUrl: _userModel.avatarUrl,
       postImageUrl: _postImageUrl,
       postDescription: postDescription,
-      // postAwardsNumber: 0,
-      // postLikesNumber: 0,
-      // postCommentsNumber: 0,
       publishedAt: Timestamp.now(),
     );
 
@@ -296,6 +292,37 @@ class MainProvider extends ChangeNotifier {
       () {
         print('----like removed successfully!');
         getPosts();
+      },
+    );
+  }
+
+  //create new chat room
+  //TODO: Refactor this shitty code!!!
+  Future<void> createChatRoom(
+      {@required String chatRoomName, @required String roomAvatarUrl}) async {
+    final _chatRoomId = chatRoomName + '~' + Uuid().v4();
+    FirebaseUtils.saveData(
+      collection: 'chat_rooms',
+      id: _chatRoomId,
+      data: {
+        'id': _chatRoomId,
+        'admin_data': {
+          'user_id': _userModel.userId,
+          'username': _userModel.username,
+          'avatar_url': _userModel.avatarUrl,
+        },
+        'members': FieldValue.arrayUnion(
+          [
+            {
+              'user_id': _userModel.userId,
+              'username': _userModel.username,
+              'avatar_url': _userModel.avatarUrl,
+            }
+          ],
+        ),
+        'room_name': chatRoomName,
+        'room_avatar_url': roomAvatarUrl,
+        'time': Timestamp.now(),
       },
     );
   }

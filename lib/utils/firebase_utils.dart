@@ -132,6 +132,11 @@ class FirebaseUtils {
           {@required String collection}) async =>
       await _firestoreDb.collection(collection).get();
 
+  //get stream data
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getStreamData(
+          {@required String collection}) =>
+      _firestoreDb.collection(collection).snapshots();
+
   /// Firebase Storage Methods ///
 
   static Future<String> uploadToStorage(

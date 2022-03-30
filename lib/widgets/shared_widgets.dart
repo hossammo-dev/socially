@@ -124,11 +124,13 @@ Future<Container> defaultModalBottomSheet(
   double height,
   double width,
   Color color,
+  bool isScrollControlled,
   EdgeInsetsGeometry margin,
   @required Widget child,
-}) =>
+}) => 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: isScrollControlled ?? false,
       builder: (context) => Container(
         height: height ?? Constants.getMobileHeight(context) * 0.5,
         width: width ?? double.infinity,

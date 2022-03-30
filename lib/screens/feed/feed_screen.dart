@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -68,7 +69,7 @@ class FeedScreen extends StatelessWidget {
           ),
         ),
         //TODO: loading functionality
-        //TODO: add pull to refresh
+        //TODO: solve refreshing posts problem.
         child: (Constants.getMainProvider(context).postsList.isEmpty)
             ? Center(
                 child: SizedBox(
@@ -185,15 +186,13 @@ class FeedScreen extends StatelessWidget {
                           ],
                         ),
                         Container(
-                          height: Constants.getMobileHeight(context) * 0.36,
-                          width: double.infinity,
-                          margin: const EdgeInsets.only(top: 10.0),
-                          child: Image.network(
-                            // 'https://img.freepik.com/free-photo/blurred-traffic-light-trails-road_1359-1009.jpg?t=st=1647366701~exp=1647367301~hmac=2f253f9d60fe219428f590bceb653dbcf374bc6d91a36a74ff962ed1698ac5fa&w=1060',
-                            _post.postImageUrl,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                            height: Constants.getMobileHeight(context) * 0.36,
+                            width: double.infinity,
+                            margin: const EdgeInsets.only(top: 10.0),
+                            child: CachedNetworkImage(
+                              imageUrl: _post.postImageUrl,
+                              fit: BoxFit.cover,
+                            )),
                         // const SizedBox(height: 10),
                         Container(
                           margin: const EdgeInsets.only(top: 10),
@@ -258,6 +257,7 @@ class FeedScreen extends StatelessWidget {
                                         onPressed: () =>
                                             defaultModalBottomSheet(
                                               context,
+                                              isScrollControlled: true,
                                               margin: EdgeInsets.only(
                                                   bottom: MediaQuery.of(context)
                                                       .viewInsets
@@ -270,7 +270,6 @@ class FeedScreen extends StatelessWidget {
                                                     _commentController,
                                               ),
                                             ),
-                                        // onPressed: () {},
                                         icon: Icon(FontAwesomeIcons.comment,
                                             size: 20,
                                             color: ConstantColors.blueColor)),
@@ -299,14 +298,13 @@ class FeedScreen extends StatelessWidget {
                                         color: ConstantColors.whiteColor,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,
-                                      ),
+                                      ), 
                                     ),
                                   ],
                                 ),
                               ],
                             ),
-                            (_post.userId ==
-                                    Constants.userId)
+                            (_post.userId == Constants.userId)
                                 ? IconButton(
                                     onPressed: () => defaultModalBottomSheet(
                                           context,

@@ -55,10 +55,14 @@ class EmailAuthWidget extends StatelessWidget {
                               googleLogin: false,
                               email: _user.email,
                               password: _user.password)
-                          .then((userId) {
-                        Constants.getMainProvider(context).getUserData(
-                            userId: _user.userId ?? Constants.userId);
-                        navigateAndRemove(context, page: HomeScreen());
+                          .then((userId) async {
+                        await Constants.getMainProvider(context)
+                            .getUserData(
+                                userId: _user.userId ?? Constants.userId)
+                            .whenComplete(
+                              () => navigateAndRemove(context,
+                                  page: HomeScreen()),
+                            );
                       }),
                       icon: Icon(
                         FontAwesomeIcons.check,
