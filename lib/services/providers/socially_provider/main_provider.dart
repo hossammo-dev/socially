@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:socially/models/chat_room_model.dart';
 import 'package:socially/models/user_model.dart';
-import 'package:socially/screens/chat/chat_screen.dart';
+import 'package:socially/screens/chat_room/chat_screen.dart';
 import 'package:socially/screens/feed/feed_screen.dart';
 import 'package:socially/screens/profile/profile_screen.dart';
 import 'package:socially/utils/firebase_utils.dart';
@@ -301,30 +302,101 @@ class MainProvider extends ChangeNotifier {
   Future<void> createChatRoom(
       {@required String chatRoomName, @required String roomAvatarUrl}) async {
     final _chatRoomId = chatRoomName + '~' + Uuid().v4();
+
+    final ChatRoomModel _roomModel = ChatRoomModel(
+      id: _chatRoomId,
+      roomName: chatRoomName,
+      roomAvatarUrl: roomAvatarUrl,
+      admin: MemberModel(
+        userId: _userModel.userId,
+        username: _userModel.username,
+        userAvatarUrl: _userModel.avatarUrl,
+      ),
+    );
     FirebaseUtils.saveData(
       collection: 'chat_rooms',
       id: _chatRoomId,
+      // data: {
+      //   'id': _chatRoomId,
+      //   'admin_data': {
+      //     'user_id': _userModel.userId,
+      //     'username': _userModel.username,
+      //     'avatar_url': _userModel.avatarUrl,
+      //   },
+      //   'members': FieldValue.arrayUnion(
+      //     [
+      //       {
+      //         'user_id': _userModel.userId,
+      //         'username': _userModel.username,
+      //         'avatar_url': _userModel.avatarUrl,
+      //       }
+      //     ],
+      //   ),
+      //   'room_name': chatRoomName,
+      //   'room_avatar_url': roomAvatarUrl,
+      //   'time': Timestamp.now(),
+      // },
+      data: _roomModel.toJson(),
+    );
+  }
+
+  //join user to a chat room
+  Future<void> joinRoom({
+    @required String roomId,
+  }) async {
+    final MemberModel _memberModel = MemberModel(
+      userId: _userModel.userId,
+      username: _userModel.username,
+      userAvatarUrl: _userModel.avatarUrl,
+    );
+    FirebaseUtils.updateData(
+      collection: 'chat_rooms',
+      id: roomId,
       data: {
-        'id': _chatRoomId,
-        'admin_data': {
-          'user_id': _userModel.userId,
-          'username': _userModel.username,
-          'avatar_url': _userModel.avatarUrl,
-        },
-        'members': FieldValue.arrayUnion(
-          [
-            {
-              'user_id': _userModel.userId,
-              'username': _userModel.username,
-              'avatar_url': _userModel.avatarUrl,
-            }
-          ],
-        ),
-        'room_name': chatRoomName,
-        'room_avatar_url': roomAvatarUrl,
+        'members': FieldValue.arrayUnion([_memberModel.toJson()]),
+      },
+    ).whenComplete(() => debugPrint(
+        '--- ${_userModel.username} added to the room successfully'));
+  }
+
+  //leave chat room
+  Future<void> leaveRoom(String roomId) async {
+    final MemberModel _memberModel = MemberModel(
+      userId: _userModel.userId,
+      username: _userModel.username,
+      userAvatarUrl: _userModel.avatarUrl,
+    );
+
+    FirebaseUtils.updateData(
+      collection: 'chat_rooms',
+      id: roomId,
+      data: {
+        'members': FieldValue.arrayRemove([_memberModel.toJson()]),
+      },
+    ).whenComplete(() =>
+        debugPrint('---${_memberModel.username} leaved room successfully!'));
+  }
+
+  //send message
+  Future<void> sendMessage({
+    @required String message,
+    @required String roomId,
+  }) async {
+    final String _messageId = _userModel.username + ' - ' + Uuid().v4();
+    FirebaseUtils.saveData(
+      collection: 'chat_rooms',
+      id: roomId,
+      secondCollection: 'messages',
+      secondId: _messageId,
+      data: {
+        'id': _messageId,
+        'message': message,
+        'user_id': _userModel.userId,
+        'username': _userModel.username,
+        'user_avatar_url': _userModel.avatarUrl,
         'time': Timestamp.now(),
       },
-    );
+    ).whenComplete(() => debugPrint('Message send successfully!'));
   }
 
   //get all users

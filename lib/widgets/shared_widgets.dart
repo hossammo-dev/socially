@@ -124,25 +124,24 @@ Future<Container> defaultModalBottomSheet(
   double height,
   double width,
   Color color,
-  bool isScrollControlled,
-  EdgeInsetsGeometry margin,
   @required Widget child,
 }) => 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: isScrollControlled ?? false,
-      builder: (context) => Container(
-        height: height ?? Constants.getMobileHeight(context) * 0.5,
-        width: width ?? double.infinity,
-        margin: margin,
-        decoration: BoxDecoration(
-          color: color ?? ConstantColors.blueGreyColor,
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(15),
-            topLeft: Radius.circular(15),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          height: height ?? Constants.getMobileHeight(context) * 0.5,
+          width: width ?? double.infinity,
+          decoration: BoxDecoration(
+            color: color ?? ConstantColors.blueGreyColor,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(15),
+              topLeft: Radius.circular(15),
+            ),
           ),
+          child: child,
         ),
-        child: child,
       ),
     );
 
@@ -150,10 +149,11 @@ AppBar defaultAppBar({
   Widget leading,
   @required Widget title,
   List<Widget> trailings,
+  bool centerTitle,
 }) =>
     AppBar(
       backgroundColor: ConstantColors.blueGreyColor.withOpacity(0.4),
-      centerTitle: true,
+      centerTitle: centerTitle ?? true,
       leading: leading ?? null,
       title: title,
       actions: trailings ?? null,

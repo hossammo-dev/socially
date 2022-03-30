@@ -257,11 +257,6 @@ class FeedScreen extends StatelessWidget {
                                         onPressed: () =>
                                             defaultModalBottomSheet(
                                               context,
-                                              isScrollControlled: true,
-                                              margin: EdgeInsets.only(
-                                                  bottom: MediaQuery.of(context)
-                                                      .viewInsets
-                                                      .bottom),
                                               child: commentSheet(
                                                 context,
                                                 comments: _post.postComments,

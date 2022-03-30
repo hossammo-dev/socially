@@ -134,8 +134,16 @@ class FirebaseUtils {
 
   //get stream data
   static Stream<QuerySnapshot<Map<String, dynamic>>> getStreamData(
-          {@required String collection}) =>
-      _firestoreDb.collection(collection).snapshots();
+      {@required String collection, String id, String secondCollection}) {
+    if (id == null)
+      return _firestoreDb.collection(collection).snapshots();
+    else
+      return _firestoreDb
+          .collection(collection)
+          .doc(id)
+          .collection(secondCollection).orderBy('time')
+          .snapshots();
+  }
 
   /// Firebase Storage Methods ///
 

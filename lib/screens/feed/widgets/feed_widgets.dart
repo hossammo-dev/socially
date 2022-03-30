@@ -160,12 +160,16 @@ Column commentSheet(
                 ),
               ),
               FloatingActionButton(
-                onPressed: () => Constants.getMainProvider(context)
-                    .commentPost(
-                      postId: postId,
-                      comment: commentController.text,
-                    )
-                    .whenComplete(() => commentController.clear()),
+                onPressed: () {
+                  if (commentController.text.isNotEmpty) {
+                    Constants.getMainProvider(context)
+                        .commentPost(
+                          postId: postId,
+                          comment: commentController.text,
+                        )
+                        .whenComplete(() => commentController.clear());
+                  }
+                },
                 backgroundColor: ConstantColors.greenColor,
                 child: Icon(
                   Icons.send_outlined,
