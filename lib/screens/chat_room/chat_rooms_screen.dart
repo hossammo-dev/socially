@@ -12,13 +12,14 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../../constants/constant_colors.dart';
 import '../../constants/constants.dart';
+import 'messages/message_test_screen.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatRoomsScreen extends StatefulWidget {
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<ChatRoomsScreen> createState() => _ChatRoomsScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatRoomsScreenState extends State<ChatRoomsScreen> {
   //TODO: don't forget to modify this page and make it more clean and readable.
 
   final TextEditingController _nameController = TextEditingController();
@@ -50,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'chatroom',
+                        'chatrooms',
                         style: TextStyle(
                           color: ConstantColors.whiteColor,
                           fontWeight: FontWeight.bold,
@@ -93,7 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   // debugPrint('----RoomId => ${chatroom['id']}');
                                   for (var member in _roomModel.members) {
                                     if (Constants.userId == member.userId)
-                                      navigateAndReplace(
+                                      return navigateAndReplace(
                                         context,
                                         page: MessagesScreen(
                                           roomName: _roomModel.roomName,
@@ -207,6 +208,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     fontSize: 16,
                                   ),
                                 ),
+                                //TODO: Change last message and start getting it from firestore.
                                 subtitle: Text(
                                   'Last Message',
                                   style: TextStyle(
@@ -246,21 +248,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Container(
               child: StreamBuilder(
                   stream: FirebaseUtils.getStreamData(collection: 'awards'),
-                  // stream:
-                  //     FirebaseFirestore.instance.collection('awards').snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    // return ListView.builder(
-                    //   itemCount: snapshot.data.docs.length,
-                    //   scrollDirection: Axis.horizontal,
-                    //   itemBuilder: ((context, index) => Container(
-                    //         height: 40,
-                    //         width: 40,
-                    //         margin: const EdgeInsets.symmetric(horizontal: 10),
-                    //         child: CachedNetworkImage(
-                    //           imageUrl: snapshot.data.docs[index].data(),
-                    //         ),
-                    //       )),
-                    // );
                     if (snapshot.connectionState == ConnectionState.waiting)
                       return Center(
                         child: CircularProgressIndicator(),
@@ -377,78 +365,3 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       );
 }
-
-
-// showDialog(
-//                                         context: context,
-//                                         builder: (context) => AlertDialog(
-//                                           backgroundColor:
-//                                               ConstantColors.darkColor,
-//                                           title: Text(
-//                                             'Join Room',
-//                                             style: TextStyle(
-//                                               color: ConstantColors.greenColor,
-//                                               fontWeight: FontWeight.bold,
-//                                               fontSize: 16,
-//                                             ),
-//                                           ),
-//                                           content: Text(
-//                                             'You are not a member in this chat room, do you want to join?',
-//                                             style: TextStyle(
-//                                               color: ConstantColors.whiteColor,
-//                                               fontWeight: FontWeight.w400,
-//                                               fontSize: 14,
-//                                             ),
-//                                           ),
-//                                           actions: [
-//                                             TextButton(
-//                                               onPressed: () =>
-//                                                   Navigator.pop(context),
-//                                               child: Text(
-//                                                 'No',
-//                                                 style: TextStyle(
-//                                                   color:
-//                                                       ConstantColors.whiteColor,
-//                                                   fontWeight: FontWeight.w600,
-//                                                   fontSize: 16,
-//                                                   decoration:
-//                                                       TextDecoration.underline,
-//                                                   decorationColor:
-//                                                       ConstantColors.whiteColor,
-//                                                 ),
-//                                               ),
-//                                             ),
-//                                             Padding(
-//                                               padding:
-//                                                   const EdgeInsets.all(8.0),
-//                                               child: defaultButton(
-//                                                 width: 70,
-//                                                 title: 'Yes',
-//                                                 btnColor:
-//                                                     ConstantColors.redColor,
-//                                                 btnFunction: () => Constants
-//                                                         .getMainProvider(
-//                                                             context)
-//                                                     .joinRoom(
-//                                                         roomId: _roomModel.id)
-//                                                     .whenComplete(
-//                                                       () => navigateTo(
-//                                                         context,
-//                                                         page: MessagesScreen(
-//                                                           roomName: _roomModel
-//                                                               .roomName,
-//                                                           roomAvatarUrl:
-//                                                               _roomModel
-//                                                                   .roomAvatarUrl,
-//                                                           roomId: _roomModel.id,
-//                                                           membersNumber:
-//                                                               _roomModel.members
-//                                                                   .length,
-//                                                         ),
-//                                                       ),
-//                                                     ),
-//                                               ),
-//                                             ),
-//                                           ],
-//                                         ),
-//                                       );

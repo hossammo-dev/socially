@@ -44,3 +44,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+# Various files
+message_test_screen.dart
+lib/test_screen.dart

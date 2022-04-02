@@ -8,7 +8,7 @@ import 'package:socially/screens/home/home_screen.dart';
 import 'package:socially/screens/splash_screen/splash_screen.dart';
 import 'package:socially/services/providers/auth_provider/auth_provider.dart';
 import 'package:socially/services/providers/socially_provider/main_provider.dart';
-import 'package:socially/test.dart';
+import 'package:socially/test_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

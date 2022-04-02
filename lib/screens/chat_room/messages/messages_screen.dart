@@ -1,11 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:socially/screens/home/home_screen.dart';
 import 'package:socially/widgets/shared_widgets.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../constants/constant_colors.dart';
 import '../../../constants/constants.dart';
@@ -90,76 +91,107 @@ class MessagesScreen extends StatelessWidget {
               color: ConstantColors.redColor,
             ),
           ),
-          //TODO: Admin Icon
+          //TODO: Admin Options Icon
         ],
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseUtils.getStreamData(
-                    collection: 'chat_rooms',
-                    id: roomId,
-                    secondCollection: 'messages'),
-                builder: (BuildContext context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting)
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  else
-                    return ListView(
-                      physics: BouncingScrollPhysics(),
-                      children: snapshot.data.docs
-                          .map(
-                            (message) => Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: (Constants.userId == message['user_id'])
-                                    ? ConstantColors.blueColor
-                                    : ConstantColors.blueGreyColor,
-                              ),
-                              padding: const EdgeInsets.all(8),
-                              margin: const EdgeInsets.all(8),
-                              child: Text(
-                                '${message['message']}',
-                                style: TextStyle(
-                                  color: ConstantColors.whiteColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                textDirection:
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseUtils.getStreamData(
+                collection: 'chat_rooms',
+                id: roomId,
+                secondCollection: 'messages', descending: true),
+            builder: (BuildContext context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting)
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              else
+                return Expanded(
+                  child: ListView(
+                    physics: BouncingScrollPhysics(),
+                    padding: const EdgeInsets.all(10),
+                    reverse: true,
+                    children: snapshot.data.docs
+                        .map(
+                          (message) => Stack(
+                            alignment: AlignmentDirectional.topStart,
+                            children: [
+                              Align(
+                                alignment:
                                     (Constants.userId == message['user_id'])
-                                        ? TextDirection.rtl
-                                        : TextDirection.ltr,
+                                        ? AlignmentDirectional.centerEnd
+                                        : AlignmentDirectional.centerStart,
+                                child: Container(
+                                  padding:
+                                      (Constants.userId != message['user_id'])
+                                          ? const EdgeInsets.symmetric(
+                                              horizontal: 15,
+                                              vertical: 10,
+                                            )
+                                          : const EdgeInsets.all(8),
+                                  margin:
+                                      (Constants.userId != message['user_id'])
+                                          ? const EdgeInsets.only(
+                                              top: 10,
+                                              left: 15,
+                                              right: 4,
+                                              bottom: 10)
+                                          : const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color:
+                                        (Constants.userId == message['user_id'])
+                                            ? ConstantColors.blueColor
+                                            : ConstantColors.blueGreyColor,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (Constants.userId !=
+                                          message['user_id'])
+                                        Text(
+                                          '${message['username']}',
+                                          style: TextStyle(
+                                            color: ConstantColors.greenColor,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      Text(
+                                        '${message['message']}',
+                                        style: TextStyle(
+                                          color: ConstantColors.whiteColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      Text(
+                                        timeago.format(message['time'].toDate()),
+                                        style: TextStyle(
+                                          color: ConstantColors.greyColor,
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          )
-                          .toList(),
-                    );
-                },
-              ),
-              // child: ListView.builder(
-              //   itemCount: 100,
-              //   physics: BouncingScrollPhysics(),
-              //   itemBuilder: (context, index) => Container(
-              //     decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(8),
-              //       color: ConstantColors.greyColor,
-              //     ),
-              //     padding: const EdgeInsets.all(8),
-              //     margin: const EdgeInsets.all(8),
-              //     child: Text(
-              //       'Hello 😃',
-              //       style: TextStyle(
-              //         color: ConstantColors.whiteColor,
-              //         fontSize: 14,
-              //         fontWeight: FontWeight.w600,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-            ),
+                              //User Avatar
+                              if (Constants.userId != message['user_id'])
+                                CircleAvatar(
+                                  backgroundImage: CachedNetworkImageProvider(
+                                      message['user_avatar_url']),
+                                  radius: 15,
+                                ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                  ),
+                );
+            },
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),

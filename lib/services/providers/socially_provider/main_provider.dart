@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:socially/models/chat_room_model.dart';
 import 'package:socially/models/user_model.dart';
-import 'package:socially/screens/chat_room/chat_screen.dart';
+import 'package:socially/screens/chat_room/chat_rooms_screen.dart';
 import 'package:socially/screens/feed/feed_screen.dart';
 import 'package:socially/screens/profile/profile_screen.dart';
 import 'package:socially/utils/firebase_utils.dart';
@@ -19,7 +19,7 @@ class MainProvider extends ChangeNotifier {
 
   List<Widget> _pagesList = [
     FeedScreen(),
-    ChatScreen(),
+    ChatRoomsScreen(),
     ProfileScreen(),
   ];
   List<Widget> get pagesList => _pagesList;
@@ -356,7 +356,7 @@ class MainProvider extends ChangeNotifier {
         'members': FieldValue.arrayUnion([_memberModel.toJson()]),
       },
     ).whenComplete(() => debugPrint(
-        '--- ${_userModel.username} added to the room successfully'));
+        '--- ${_userModel.username} joined room successfully'));
   }
 
   //leave chat room

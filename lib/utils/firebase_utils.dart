@@ -134,14 +134,14 @@ class FirebaseUtils {
 
   //get stream data
   static Stream<QuerySnapshot<Map<String, dynamic>>> getStreamData(
-      {@required String collection, String id, String secondCollection}) {
+      {@required String collection, String id, String secondCollection , bool descending = false}) {
     if (id == null)
       return _firestoreDb.collection(collection).snapshots();
     else
       return _firestoreDb
           .collection(collection)
           .doc(id)
-          .collection(secondCollection).orderBy('time')
+          .collection(secondCollection).orderBy('time', descending: descending)
           .snapshots();
   }
 
