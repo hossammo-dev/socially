@@ -33,9 +33,18 @@ A social media application made with #FLUTTER, allows users to share their lovel
 
 <a href="https://www.buymeacoffee.com/frave"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="200"></a> -->
 
-## Flutter
+## Flutter Packages
 
 - Flutter Provider
+- cached_network_image
+- custom_navigation_bar
+- eva_icons_flutter
+- conditional_builder
+- font_awesome_flutter
+- lottie
+- page_transition
+- uuid
+- timeago
 
 ## Next Features
 
