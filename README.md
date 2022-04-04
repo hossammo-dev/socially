@@ -22,9 +22,10 @@ samples, guidance on mobile development, and a full API reference.
 
 Hossam Developer
 
-<!-- ### Social Media -->
+### Social Media
 
-<!-- <a href="https://www.instagram.com/frave_developer"><img src="https://github.com/aritraroy/social-icons/blob/master/instagram-icon.png?raw=true" width="50"></a> -->
+<a href="https://www.linkedin.com/in/hossam-mohammad-9965791a8/"><img src="https://github.com/aritraroy/social-icons/blob/master/linkedin-icon.png?raw=true" width="50"></a>
+<a href="https://twitter.com/hossammo9996"><img src="https://github.com/aritraroy/social-icons/blob/master/twitter-icon.png?raw=true" width="50"></a>
 
 <!-- ### Donate
 
