@@ -122,8 +122,8 @@ Hossam Developer
     </tr>
     <tr>
         <td><img src="./screenshots/chatrooms.jpg" alt="" width="200"></td>
-        <td><img src="./screenshots/craete_chatroom.jpg" alt="" width="200"></td>
-        <td><img src="./screenshots/joing_chatroom.jpg" alt="" width="200"></td>
+        <td><img src="./screenshots/create_chatroom.jpg" alt="" width="200"></td>
+        <td><img src="./screenshots/join_chatroom.jpg" alt="" width="200"></td>
     <tr>
 </table>
 
