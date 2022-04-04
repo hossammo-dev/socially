@@ -20,7 +20,7 @@ samples, guidance on mobile development, and a full API reference.
 
 # Socially - Social Media
 
-Hossam Developer
+Developer -> Hossam Mohammad
 
 ### Social Media
 
