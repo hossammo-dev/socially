@@ -18,11 +18,11 @@ samples, guidance on mobile development, and a full API reference.
 
 -->
 <!-- https://www.youtube.com/c/Abhishvek -->
-## FIRST => Design credits belongs to <a href="https://www.youtube.com/c/Abhishvek"><img src="https://github.com/aritraroy/social-icons/blob/master/youtube-icon.png?raw=true" width="50"></a>, so a big thanks for him.
+## FIRST => Design credits belongs to [Abhishvek](https://www.youtube.com/c/Abhishvek), so a big thanks for him.
 
 # Socially - Social Media
 
-A social media application made with #FLUTTER, allowrs users to share their lovely moments and contact with each other.
+A social media application made with #FLUTTER, allows users to share their lovely moments and contact with each other.
 
 ### Social Media
 
