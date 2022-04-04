@@ -17,10 +17,12 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference. 
 
 -->
+<!-- https://www.youtube.com/c/Abhishvek -->
+## FIRST => Design credits belongs to <a href="https://www.youtube.com/c/Abhishvek"><img src="https://github.com/aritraroy/social-icons/blob/master/youtube-icon.png?raw=true" width="50"></a>, so a big thanks for him.
 
 # Socially - Social Media
 
-Developer -> Hossam Mohammad
+A social media application made with #FLUTTER, allowrs users to share their lovely moments and contact with each other.
 
 ### Social Media
 
@@ -140,16 +142,3 @@ Developer -> Hossam Mohammad
         <td><img src="./screenshots/user_profile.jpg" alt="" width="200"></td>
     <tr>
 </table>
-
-<!-- <table border>
-    <tr>
-        <th style="text-align:center">Account</th>
-        <th style="text-align:center">List Messages</th>
-        <th style="text-align:center">Chat</th>
-    </tr>
-    <tr>
-        <td><img src="./screenshots/account.png" alt="" width="200"></td>
-        <td><img src="./screenshots/list-messages.png" alt="" width="200"></td>
-        <td><img src="./screenshots/chat.png" alt="" width="200"></td>
-    <tr>
-</table> -->
