@@ -18,7 +18,7 @@ samples, guidance on mobile development, and a full API reference.
 
 -->
 <!-- https://www.youtube.com/c/Abhishvek -->
-## FIRST => Design credits belongs to [Abhishvek](https://www.youtube.com/c/Abhishvek), so a big thanks to him.
+## FIRST => Design credits belongs to [Abhishvek](https://www.youtube.com/c/Abhishvek), so a big thanks for him.
 
 # Socially - Social Media
 
